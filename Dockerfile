@@ -11,4 +11,4 @@ RUN pnpm install --prod --frozen-lockfile
 
 COPY . .
 
-CMD ["pnpm", "start"]
+CMD ["sh", "-c", "pnpm directus database migrate:latest && pnpm start"]
