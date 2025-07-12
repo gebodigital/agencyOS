@@ -12,5 +12,4 @@ RUN pnpm install --prod --frozen-lockfile
 
 COPY . .
 
-# Migra la base de datos con npx y luego inicia la aplicación
-CMD ["sh", "-c", "npx directus database migrate:latest && pnpm start"]
+CMD ["tail", "-f", "/dev/null"]
