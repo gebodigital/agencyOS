@@ -24,31 +24,12 @@ services:
       CACHE_STORE: redis
       CACHE_REDIS: ${COOLIFY_SERVICE_REDIS_URL}
       PUBLIC_URL: https://www.digitalgebo.com
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.agency-os-http.entryPoints=http"
-      - "traefik.http.routers.agency-os-http.rule=Host(`digitalgebo.com`,`www.digitalgebo.com`)"
-      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
-      - "traefik.http.routers.agency-os-http.middlewares=redirect-to-https@docker"
-      - "traefik.http.routers.agency-os-https.entryPoints=https"
-      - "traefik.http.routers.agency-os-https.rule=Host(`digitalgebo.com`,`www.digitalgebo.com`)"
-      - "traefik.http.routers.agency-os-https.tls=true"
-      - "traefik.http.routers.agency-os-https.tls.certresolver=letsencrypt"
-      - "traefik.http.services.agency-os.loadbalancer.server.port=8055"
     volumes:
       - uploads:/app/uploads
       - extensions:/app/extensions
-    # Conecta el servicio a la red correcta
-    networks:
-      - coolify
 
 volumes:
   uploads:
     name: ${COOLIFY_VOLUME_NAME_agencyos-uploads}
   extensions:
     name: ${COOLIFY_VOLUME_NAME_agencyos-extensions}
-
-# Define la red como externa
-networks:
-  coolify:
-    external: true
