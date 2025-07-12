@@ -3,13 +3,13 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    # La sección 'ports' se elimina. Coolify la gestionará a través de la UI.
+    # La sección 'ports' se elimina. Traefik (el proxy de Coolify) se encargará.
     healthcheck:
       test: ["CMD", "wget", "--spider", "-q", "http://localhost:8055/server/health"]
-      interval: 1m  # Comprobar cada minuto
-      timeout: 30s    # Esperar hasta 30 segundos por una respuesta
-      retries: 3      # Reintentar 3 veces
-      start_period: 2m # Darle 2 minutos de gracia al contenedor para que arranque antes de empezar a comprobar
+      interval: 1m
+      timeout: 30s
+      retries: 3
+      start_period: 2m
     environment:
       KEY: ${KEY}
       SECRET: ${SECRET}
@@ -24,7 +24,19 @@ services:
       CACHE_ENABLED: "true"
       CACHE_STORE: redis
       CACHE_REDIS: ${COOLIFY_SERVICE_REDIS_URL}
-      PUBLIC_URL: ${PUBLIC_URL}
+      PUBLIC_URL: https://www.digitalgebo.com
+    # Etiquetas de Traefik para gestionar el proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.agency-os-http.entryPoints=http"
+      - "traefik.http.routers.agency-os-http.rule=Host(`digitalgebo.com`,`www.digitalgebo.com`)"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.routers.agency-os-http.middlewares=redirect-to-https@docker"
+      - "traefik.http.routers.agency-os-https.entryPoints=https"
+      - "traefik.http.routers.agency-os-https.rule=Host(`digitalgebo.com`,`www.digitalgebo.com`)"
+      - "traefik.http.routers.agency-os-https.tls=true"
+      - "traefik.http.routers.agency-os-https.tls.certresolver=letsencrypt"
+      - "traefik.http.services.agency-os.loadbalancer.server.port=8055"
     volumes:
       - uploads:/app/uploads
       - extensions:/app/extensions
