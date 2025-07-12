@@ -3,14 +3,13 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    ports:
-      - "8055:8055"
-    # Añadimos la sección de healthcheck aquí
+    # La sección 'ports' se elimina. Coolify la gestionará a través de la UI.
     healthcheck:
       test: ["CMD", "wget", "--spider", "-q", "http://localhost:8055/server/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+      interval: 1m  # Comprobar cada minuto
+      timeout: 30s    # Esperar hasta 30 segundos por una respuesta
+      retries: 3      # Reintentar 3 veces
+      start_period: 2m # Darle 2 minutos de gracia al contenedor para que arranque antes de empezar a comprobar
     environment:
       KEY: ${KEY}
       SECRET: ${SECRET}
