@@ -3,7 +3,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    # La sección 'ports' se elimina. Traefik (el proxy de Coolify) se encargará.
     healthcheck:
       test: ["CMD", "wget", "--spider", "-q", "http://localhost:8055/server/health"]
       interval: 1m
@@ -25,7 +24,6 @@ services:
       CACHE_STORE: redis
       CACHE_REDIS: ${COOLIFY_SERVICE_REDIS_URL}
       PUBLIC_URL: https://www.digitalgebo.com
-    # Etiquetas de Traefik para gestionar el proxy
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.agency-os-http.entryPoints=http"
@@ -40,9 +38,17 @@ services:
     volumes:
       - uploads:/app/uploads
       - extensions:/app/extensions
+    # Conecta el servicio a la red del proxy
+    networks:
+      - coolify-proxy
 
 volumes:
   uploads:
     name: ${COOLIFY_VOLUME_NAME_agencyos-uploads}
   extensions:
     name: ${COOLIFY_VOLUME_NAME_agencyos-extensions}
+
+# Define la red del proxy como externa
+networks:
+  coolify-proxy:
+    external: true
