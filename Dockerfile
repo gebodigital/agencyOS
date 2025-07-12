@@ -7,10 +7,10 @@ RUN corepack enable
 
 COPY package.json pnpm-lock.yaml ./
 
-# Instala TODAS las dependencias (incluyendo las de desarrollo como 'directus')
-RUN pnpm install --frozen-lockfile
+# Instala solo las dependencias de producción
+RUN pnpm install --prod --frozen-lockfile
 
 COPY . .
 
-# Migra la base de datos y luego inicia la aplicación
+# Migra la base de datos con npx y luego inicia la aplicación
 CMD ["sh", "-c", "npx directus database migrate:latest && pnpm start"]
