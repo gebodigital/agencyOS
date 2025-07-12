@@ -38,9 +38,9 @@ services:
     volumes:
       - uploads:/app/uploads
       - extensions:/app/extensions
-    # Conecta el servicio a la red del proxy
+    # Conecta el servicio a la red correcta
     networks:
-      - coolify-proxy
+      - coolify
 
 volumes:
   uploads:
@@ -48,7 +48,7 @@ volumes:
   extensions:
     name: ${COOLIFY_VOLUME_NAME_agencyos-extensions}
 
-# Define la red del proxy como externa
+# Define la red como externa
 networks:
-  coolify-proxy:
+  coolify:
     external: true
