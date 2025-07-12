@@ -1,0 +1,31 @@
+services:
+  agency-os:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8055:8055"
+    environment:
+      KEY: ${KEY}
+      SECRET: ${SECRET}
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      DB_CLIENT: pg
+      DB_HOST: ${COOLIFY_SERVICE_POSTGRESQL_HOST}
+      DB_PORT: ${COOLIFY_SERVICE_POSTGRESQL_PORT}
+      DB_DATABASE: ${COOLIFY_SERVICE_POSTGRESQL_DATABASE}
+      DB_USER: ${COOLIFY_SERVICE_POSTGRESQL_USER}
+      DB_PASSWORD: ${COOLIFY_SERVICE_POSTGRESQL_PASSWORD}
+      CACHE_ENABLED: "true"
+      CACHE_STORE: redis
+      CACHE_REDIS: ${COOLIFY_SERVICE_REDIS_URL}
+      PUBLIC_URL: ${PUBLIC_URL}
+    volumes:
+      - uploads:/app/uploads
+      - extensions:/app/extensions
+
+volumes:
+  uploads:
+    name: ${COOLIFY_VOLUME_NAME_agencyos-uploads}
+  extensions:
+    name: ${COOLIFY_VOLUME_NAME_agencyos-extensions}
